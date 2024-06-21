@@ -1,0 +1,10 @@
+query GetUniversities {
+  getUniversities {
+    location
+    name
+    id
+    student {
+      name
+    }
+  }
+}

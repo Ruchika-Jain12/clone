@@ -1,0 +1,17 @@
+mutation CreateStudent(
+  $studentId: String
+  $name: String
+  $mail: String
+  $universityId: String
+  $phoneno: Float
+  $address: String
+) {
+  createStudent(
+    studentId: $studentId
+    name: $name
+    mail: $mail
+    universityId: $universityId
+    phoneno: $phoneno
+    address: $address
+  )
+}

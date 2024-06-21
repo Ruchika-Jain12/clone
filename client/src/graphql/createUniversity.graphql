@@ -1,0 +1,11 @@
+mutation CreateUniversity(
+  $universityName: String!
+  $location: String
+  $universityId: String
+) {
+  createUniversity(
+    universityName: $universityName
+    location: $location
+    universityID: $universityId
+  )
+}
