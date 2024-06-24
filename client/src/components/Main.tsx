@@ -13,6 +13,7 @@ import {
   useCreateCourseMutation,
   useCreateStudentMutation,
   useCreateUniversityMutation,
+  useDeleteCourseMutation,
   useDeleteStudentMutation,
   useDeleteUniversityMutation,
   useGetCoursesQuery,
@@ -97,6 +98,7 @@ const Main: FC = () => {
 
   // Courses
   const [createCourse] = useCreateCourseMutation()
+  const [deleteCourse] = useDeleteCourseMutation()
   const { data: courseDtaa, refetch: refetchCourse } = useGetCoursesQuery()
 
   const [current, setCurrent] = useState('student')
@@ -376,12 +378,12 @@ const Main: FC = () => {
                   className="bg-white p-6 rounded-lg"
                   onFinish={async values => {
                     try {
-                      await deleteStudent({
+                      await deleteCourse({
                         variables: {
-                          deleteStudentId: values.id
+                          deleteCourseId: values.id
                         }
                       })
-                      refetchStudents()
+                      refetchCourse()
                       success()
                     } catch {
                       error()

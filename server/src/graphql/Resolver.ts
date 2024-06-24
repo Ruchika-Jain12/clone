@@ -40,6 +40,12 @@ export class MyUniversityResolver {
     return Course.find()
   }
 
+  @Mutation(() => Boolean)
+  async deleteCourse(@Arg('id', () => String) id: string) {
+    await Course.delete(id)
+    return true
+  }
+
   // student
   @Mutation(() => Boolean, { nullable: true })
   async createStudent(
