@@ -1,0 +1,13 @@
+mutation CreateCourse(
+  $name: String
+  $duration: String
+  $courseId: String
+  $universityId: String
+) {
+  createCourse(
+    name: $name
+    duration: $duration
+    courseId: $courseId
+    universityId: $universityId
+  )
+}

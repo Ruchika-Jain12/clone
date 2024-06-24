@@ -10,10 +10,12 @@ import {
 } from 'antd'
 import { FC, useState } from 'react'
 import {
+  useCreateCourseMutation,
   useCreateStudentMutation,
   useCreateUniversityMutation,
   useDeleteStudentMutation,
   useDeleteUniversityMutation,
+  useGetCoursesQuery,
   useGetStudentsQuery,
   useGetUniversitiesQuery
 } from '../generated/graphql'
@@ -33,6 +35,11 @@ const items = [
   {
     label: 'UNIVERSITY',
     key: 'university',
+    icon: <AppstoreOutlined />
+  },
+  {
+    label: 'COURSE',
+    key: 'course',
     icon: <AppstoreOutlined />
   },
   {
@@ -77,14 +84,20 @@ const items = [
 ]
 
 const Main: FC = () => {
+  // University
   const [createUniversity] = useCreateUniversityMutation()
   const [deleteUniversity] = useDeleteUniversityMutation()
   const { data: universitiesData, refetch: refetchUniversities } =
     useGetUniversitiesQuery()
 
+  // Student
   const [createStudent] = useCreateStudentMutation()
   const [deleteStudent] = useDeleteStudentMutation()
   const { data: studentsData, refetch: refetchStudents } = useGetStudentsQuery()
+
+  // Courses
+  const [createCourse] = useCreateCourseMutation()
+  const { data: courseDtaa, refetch: refetchCourse } = useGetCoursesQuery()
 
   const [current, setCurrent] = useState('student')
   const onClick: MenuProps['onClick'] = e => {
@@ -194,12 +207,17 @@ const Main: FC = () => {
                 <Form
                   className="bg-white p-6 rounded-lg"
                   onFinish={async values => {
-                    await deleteStudent({
-                      variables: {
-                        deleteStudentId: values.id
-                      }
-                    })
-                    refetchStudents()
+                    try {
+                      await deleteStudent({
+                        variables: {
+                          deleteStudentId: values.id
+                        }
+                      })
+                      refetchStudents()
+                      success()
+                    } catch {
+                      error()
+                    }
                   }}
                 >
                   <Form.Item className="mb-4" name="id">
@@ -265,16 +283,113 @@ const Main: FC = () => {
                 <Form
                   className="bg-white p-6 rounded-lg"
                   onFinish={async values => {
-                    await deleteUniversity({
-                      variables: {
-                        deleteUniversityId: values.id
-                      }
-                    })
-                    refetchUniversities()
+                    try {
+                      await deleteUniversity({
+                        variables: {
+                          deleteUniversityId: values.id
+                        }
+                      })
+                      refetchUniversities()
+                      success()
+                    } catch {
+                      error()
+                    }
                   }}
                 >
                   <Form.Item className="mb-4" name="id">
                     <Input placeholder="Enter id to delete university"></Input>
+                  </Form.Item>
+                  <Button
+                    htmlType="submit"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded focus:outline-none focus:shadow-outline mt-auto"
+                    type="primary"
+                  >
+                    Delete
+                  </Button>
+                </Form>
+              </div>
+            </>
+          )}
+          {current === 'course' && (
+            <>
+              <div className="flex w-full">
+                <Form
+                  className="bg-white p-6 rounded-lg shadow-md w-1/2 flex flex-col"
+                  onFinish={async values => {
+                    try {
+                      await createCourse({
+                        variables: {
+                          name: values.name,
+                          duration: values.duration,
+                          universityId: values.universityId
+                        }
+                      })
+                      refetchCourse()
+                      success()
+                    } catch {
+                      error()
+                    }
+                  }}
+                >
+                  <h1 className="text-gray-800 pb-3">Course Data</h1>
+                  <Form.Item className="mb-4" name="name">
+                    <Input placeholder="Enter student Name"></Input>
+                  </Form.Item>
+                  <Form.Item className="mb-4" name="duration">
+                    <Input placeholder="Enter course duration"></Input>
+                  </Form.Item>
+                  <Form.Item className="mb-4" name="universityId">
+                    <Select>
+                      {courseDtaa?.getCourses?.map(i => (
+                        <Select.Option key={i.id} value={i.id}>
+                          {i.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  <Form.Item>
+                    <Button
+                      htmlType="submit"
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded focus:outline-none focus:shadow-outline mt-auto"
+                      type="primary"
+                    >
+                      Create
+                    </Button>
+                  </Form.Item>
+                </Form>
+                <div className="w-1/2 ms-4">
+                  <Card>
+                    {courseDtaa?.getCourses?.map(i => (
+                      <div key={i.name}>
+                        {
+                          i.name + '   ' + i.duration
+                          /*+
+                          '   ' + i.universityI */
+                        }
+                      </div>
+                    ))}
+                  </Card>
+                </div>
+              </div>
+              <div className="flex w-full">
+                <Form
+                  className="bg-white p-6 rounded-lg"
+                  onFinish={async values => {
+                    try {
+                      await deleteStudent({
+                        variables: {
+                          deleteStudentId: values.id
+                        }
+                      })
+                      refetchStudents()
+                      success()
+                    } catch {
+                      error()
+                    }
+                  }}
+                >
+                  <Form.Item className="mb-4" name="id">
+                    <Input placeholder="Enter id to delete student"></Input>
                   </Form.Item>
                   <Button
                     htmlType="submit"

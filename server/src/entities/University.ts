@@ -6,6 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm'
+import { Course } from './Course'
 import { Student } from './Student'
 
 @ObjectType()
@@ -31,4 +32,11 @@ export class University extends BaseEntity {
     onDelete: 'CASCADE'
   })
   student?: Student[]
+
+  @Field(() => [Course], { nullable: true })
+  @OneToMany(() => Course, cou => cou.university, {
+    nullable: true,
+    onDelete: 'CASCADE'
+  })
+  course?: Course
 }

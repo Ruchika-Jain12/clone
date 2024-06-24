@@ -1,0 +1,13 @@
+query GetCourses {
+  getCourses {
+    duration
+    id
+    name
+    university {
+      name
+      student {
+        name
+      }
+    }
+  }
+}

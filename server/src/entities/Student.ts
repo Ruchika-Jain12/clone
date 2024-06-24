@@ -42,7 +42,10 @@ export class Student extends BaseEntity {
   universityId?: string
 
   @Field(() => University, { nullable: true })
-  @ManyToOne(() => University, uni => uni.student, { nullable: true , onDelete: 'CASCADE'})
+  @ManyToOne(() => University, uni => uni.student, {
+    nullable: true,
+    onDelete: 'CASCADE'
+  })
   university?: University
 }
 

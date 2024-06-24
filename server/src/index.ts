@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm'
 import { Student } from './entities/Student'
 import { University } from './entities/University'
 import { MyUniversityResolver } from './graphql/Resolver'
+import { Course } from './entities/Course'
 export let conn: DataSource
 async function startServer() {
   conn = new DataSource({
@@ -12,7 +13,7 @@ async function startServer() {
     url: 'postgresql://postgres:QhQgbqZgimfnBizGFNXhiOAWrqpzoRsB@viaduct.proxy.rlwy.net:18081/railway',
     synchronize: true,
     logging: false,
-    entities: [University, Student],
+    entities: [University, Student, Course],
     migrations: [],
     subscribers: []
   })

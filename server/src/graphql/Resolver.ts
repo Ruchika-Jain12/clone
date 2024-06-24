@@ -1,9 +1,45 @@
 import { Arg, Mutation, Query, Resolver } from 'type-graphql'
+import { Course } from '../entities/Course'
 import { Student } from '../entities/Student'
 import { University } from '../entities/University'
 
 @Resolver()
 export class MyUniversityResolver {
+  // Courses
+  @Mutation(() => Boolean, { nullable: true })
+  async createCourse(
+    @Arg('name', () => String, { nullable: true }) name: string,
+    @Arg('duration', () => String, { nullable: true }) duration?: string,
+    @Arg('universityId', () => String, { nullable: true })
+    universityId?: string,
+    @Arg('courseId', () => String, { nullable: true }) courseId?: string
+  ): Promise<boolean> {
+    if (courseId) {
+      await Course.update(
+        {
+          id: courseId
+        },
+        {
+          name: name,
+          duration: duration
+          // universityId
+        }
+      )
+    } else {
+      await Course.save({
+        name: name,
+        duration: duration
+        // universityId
+      })
+    }
+    return true
+  }
+
+  @Query(() => [Course])
+  async getCourses() {
+    return Course.find()
+  }
+
   // student
   @Mutation(() => Boolean, { nullable: true })
   async createStudent(
@@ -46,9 +82,7 @@ export class MyUniversityResolver {
 
   @Mutation(() => Boolean)
   async deleteStudent(@Arg('id', () => String) id: string) {
-    const student = await Student.findOne({ where: { id } })
-    if (!student) throw new Error('Student not found!')
-    await student.remove()
+    await Student.delete(id)
     return true
   }
 

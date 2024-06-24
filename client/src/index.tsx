@@ -9,7 +9,6 @@ const client = new ApolloClient({
   uri: 'http://localhost:4000/graphql',
   cache: new InMemoryCache()
 })
-console.log('authhhh dta', process.env.REACT_APP_AUTH0_DOMAIN)
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 root.render(

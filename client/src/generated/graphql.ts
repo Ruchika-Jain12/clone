@@ -17,12 +17,29 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type Course = {
+  __typename?: 'Course';
+  duration?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  university?: Maybe<University>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  createCourse?: Maybe<Scalars['Boolean']['output']>;
   createStudent?: Maybe<Scalars['Boolean']['output']>;
   createUniversity: Scalars['Boolean']['output'];
   deleteStudent: Scalars['Boolean']['output'];
   deleteUniversity: Scalars['Boolean']['output'];
+};
+
+
+export type MutationCreateCourseArgs = {
+  courseId?: InputMaybe<Scalars['String']['input']>;
+  duration?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  universityId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -54,6 +71,7 @@ export type MutationDeleteUniversityArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  getCourses: Array<Course>;
   getStudents: Array<Student>;
   getUniversities: Array<University>;
 };
@@ -71,11 +89,22 @@ export type Student = {
 
 export type University = {
   __typename?: 'University';
+  course?: Maybe<Array<Course>>;
   id: Scalars['ID']['output'];
   location?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   student?: Maybe<Array<Student>>;
 };
+
+export type CreateCourseMutationVariables = Exact<{
+  name?: InputMaybe<Scalars['String']['input']>;
+  duration?: InputMaybe<Scalars['String']['input']>;
+  courseId?: InputMaybe<Scalars['String']['input']>;
+  universityId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type CreateCourseMutation = { __typename?: 'Mutation', createCourse?: boolean | null };
 
 export type CreateStudentMutationVariables = Exact<{
   studentId?: InputMaybe<Scalars['String']['input']>;
@@ -112,6 +141,11 @@ export type DeleteUniversityMutationVariables = Exact<{
 
 export type DeleteUniversityMutation = { __typename?: 'Mutation', deleteUniversity: boolean };
 
+export type GetCoursesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCoursesQuery = { __typename?: 'Query', getCourses: Array<{ __typename?: 'Course', duration?: string | null, id: string, name: string, university?: { __typename?: 'University', name: string, student?: Array<{ __typename?: 'Student', name: string }> | null } | null }> };
+
 export type GetStudentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -123,6 +157,45 @@ export type GetUniversitiesQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetUniversitiesQuery = { __typename?: 'Query', getUniversities: Array<{ __typename?: 'University', location?: string | null, name: string, id: string, student?: Array<{ __typename?: 'Student', name: string }> | null }> };
 
 
+export const CreateCourseDocument = gql`
+    mutation CreateCourse($name: String, $duration: String, $courseId: String, $universityId: String) {
+  createCourse(
+    name: $name
+    duration: $duration
+    courseId: $courseId
+    universityId: $universityId
+  )
+}
+    `;
+export type CreateCourseMutationFn = Apollo.MutationFunction<CreateCourseMutation, CreateCourseMutationVariables>;
+
+/**
+ * __useCreateCourseMutation__
+ *
+ * To run a mutation, you first call `useCreateCourseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCourseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCourseMutation, { data, loading, error }] = useCreateCourseMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      duration: // value for 'duration'
+ *      courseId: // value for 'courseId'
+ *      universityId: // value for 'universityId'
+ *   },
+ * });
+ */
+export function useCreateCourseMutation(baseOptions?: Apollo.MutationHookOptions<CreateCourseMutation, CreateCourseMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCourseMutation, CreateCourseMutationVariables>(CreateCourseDocument, options);
+      }
+export type CreateCourseMutationHookResult = ReturnType<typeof useCreateCourseMutation>;
+export type CreateCourseMutationResult = Apollo.MutationResult<CreateCourseMutation>;
+export type CreateCourseMutationOptions = Apollo.BaseMutationOptions<CreateCourseMutation, CreateCourseMutationVariables>;
 export const CreateStudentDocument = gql`
     mutation CreateStudent($studentId: String, $name: String, $mail: String, $universityId: String, $phoneno: Float, $address: String) {
   createStudent(
@@ -265,6 +338,53 @@ export function useDeleteUniversityMutation(baseOptions?: Apollo.MutationHookOpt
 export type DeleteUniversityMutationHookResult = ReturnType<typeof useDeleteUniversityMutation>;
 export type DeleteUniversityMutationResult = Apollo.MutationResult<DeleteUniversityMutation>;
 export type DeleteUniversityMutationOptions = Apollo.BaseMutationOptions<DeleteUniversityMutation, DeleteUniversityMutationVariables>;
+export const GetCoursesDocument = gql`
+    query GetCourses {
+  getCourses {
+    duration
+    id
+    name
+    university {
+      name
+      student {
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCoursesQuery__
+ *
+ * To run a query within a React component, call `useGetCoursesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCoursesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCoursesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCoursesQuery(baseOptions?: Apollo.QueryHookOptions<GetCoursesQuery, GetCoursesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCoursesQuery, GetCoursesQueryVariables>(GetCoursesDocument, options);
+      }
+export function useGetCoursesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCoursesQuery, GetCoursesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCoursesQuery, GetCoursesQueryVariables>(GetCoursesDocument, options);
+        }
+export function useGetCoursesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetCoursesQuery, GetCoursesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetCoursesQuery, GetCoursesQueryVariables>(GetCoursesDocument, options);
+        }
+export type GetCoursesQueryHookResult = ReturnType<typeof useGetCoursesQuery>;
+export type GetCoursesLazyQueryHookResult = ReturnType<typeof useGetCoursesLazyQuery>;
+export type GetCoursesSuspenseQueryHookResult = ReturnType<typeof useGetCoursesSuspenseQuery>;
+export type GetCoursesQueryResult = Apollo.QueryResult<GetCoursesQuery, GetCoursesQueryVariables>;
 export const GetStudentsDocument = gql`
     query GetStudents {
   getStudents {
